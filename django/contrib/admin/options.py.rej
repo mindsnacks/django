@@ -1,0 +1,39 @@
+***************
+*** 937,942 ****
+          for inline, formset in zip(self.inline_instances, formsets):
+              fieldsets = list(inline.get_fieldsets(request, obj))
+              inline_admin_formset = helpers.InlineAdminFormSet(inline, formset, fieldsets)
+              inline_admin_formsets.append(inline_admin_formset)
+              media = media + inline_admin_formset.media
+  
+--- 948,961 ----
+          for inline, formset in zip(self.inline_instances, formsets):
+              fieldsets = list(inline.get_fieldsets(request, obj))
+              inline_admin_formset = helpers.InlineAdminFormSet(inline, formset, fieldsets)
++             if inline.inlines:
++                 for form in formset.forms:
++                     if form.instance.pk:
++                         instance = form.instance
++                     else:
++                         instance = None
++                     form.inlines = inline.get_inlines(request, instance, prefix=form.prefix)
++                 inline_admin_formset.inlines = inline.get_inlines(request)
+              inline_admin_formsets.append(inline_admin_formset)
+              media = media + inline_admin_formset.media
+  
+***************
+*** 1197,1202 ****
+      template = None
+      verbose_name = None
+      verbose_name_plural = None
+  
+      def __init__(self, parent_model, admin_site):
+          self.admin_site = admin_site
+--- 1216,1222 ----
+      template = None
+      verbose_name = None
+      verbose_name_plural = None
++     inlines = []
+  
+      def __init__(self, parent_model, admin_site):
+          self.admin_site = admin_site
