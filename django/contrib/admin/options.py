@@ -931,6 +931,14 @@ class ModelAdmin(BaseModelAdmin):
             readonly = list(inline.get_readonly_fields(request))
             inline_admin_formset = helpers.InlineAdminFormSet(inline, formset,
                 fieldsets, readonly, model_admin=self)
+            if inline.inlines:
+                for form in formset.forms:
+                    if form.instance.pk:
+                        instance = form.instance
+                    else:
+                        instance = None
+                    form.inlines = inline.get_inlines(request, instance, prefix=form.prefix)
+                inline_admin_formset.inlines = inline.get_inlines(request)
             inline_admin_formsets.append(inline_admin_formset)
             media = media + inline_admin_formset.media
 
@@ -1294,6 +1302,7 @@ class InlineModelAdmin(BaseModelAdmin):
     template = None
     verbose_name = None
     verbose_name_plural = None
+    inlines = []
     can_delete = True
 
     def __init__(self, parent_model, admin_site):
