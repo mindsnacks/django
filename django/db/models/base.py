@@ -852,6 +852,7 @@ class Model(object):
         from django.core.urlresolvers import reverse
         info = (self._meta.app_label, self._meta.module_name)
         return reverse("admin:%s_%s_change" % info, args=(self.id,))
+    admin_url = property(get_admin_url)
 
 
 ############################################
