@@ -848,6 +848,11 @@ class Model(object):
         if errors:
             raise ValidationError(errors)
 
+    def get_admin_url(self):
+        from django.core.urlresolvers import reverse
+        info = (self._meta.app_label, self._meta.module_name)
+        return reverse("admin:%s_%s_change" % info, args=(self.id,))
+
 
 ############################################
 # HELPER FUNCTIONS (CURRIED MODEL METHODS) #
